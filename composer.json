@@ -1,0 +1,18 @@
+{
+    "name": "offbeatwp/gravityforms",
+    "description": "Adding some GravityForms functionality",
+    "license": "MIT",
+    "type": "offbeatwp-service",
+    "authors": [
+        {
+            "name": "Chris Schrijver",
+            "email": "chris@raow.nl"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "OffbeatWP\\GravityForms\\": "src"
+        }
+    },
+    "require": {}
+}
