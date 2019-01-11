@@ -17,10 +17,6 @@ class Service extends AbstractService
             add_filter('gform_form_settings', [ Hooks\FilterButtonClass::class, 'buttonClass' ], 10, 2);
             add_filter('gform_pre_form_settings_save', [ Hooks\FilterButtonClass::class, 'buttonClassProcess' ], 10, 1);
             add_filter('gform_enable_field_label_visibility_settings', '__return_true');
-
-            add_action('gform_field_appearance_settings', [$this, 'customFields']);
-            add_action('gform_editor_js', [$this, 'customFieldSizes']);
-            add_filter('gform_tooltips', [$this, 'customFieldTooltips']);
         } else {
             add_filter('gform_init_scripts_footer', '__return_true');
         }
