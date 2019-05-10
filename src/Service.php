@@ -24,6 +24,8 @@ class Service extends AbstractService
         offbeat('components')->register('gravityform', Components\GravityForm::class);
 
         $view->registerGlobal('gf', new Helpers\View());
+
+        add_action('acf/include_field_types', [$this, 'addACFGravityFormsFieldType']);
     }
 
     public function formActionOnAjax($formTag, $form)
@@ -59,5 +61,9 @@ class Service extends AbstractService
 
         $content = ' }, false);';
         return $content;
+    }
+
+    public function addACFGravityFormsFieldType() {
+        new Integrations\AcfFieldGravityForms();
     }
 }

@@ -2,6 +2,8 @@
 namespace OffbeatWP\GravityForms\Components;
 
 use \OffbeatWP\Components\AbstractComponent;
+use \OffbeatWP\Form\Form;
+use OffbeatWP\GravityForms\Fields\GravityFormsField;
 
 class GravityForm extends AbstractComponent
 {
@@ -17,24 +19,29 @@ class GravityForm extends AbstractComponent
 
     public function render($settings)
     {
-        return gravity_form($settings->formId, $settings->displayTitle, $settings->displayDescription, false, null, true, 1, false);
+        if (!is_object($settings->form) || !isset($settings->form->id)) {
+            return 'No valid form';
+        }
+
+        if (!isset($settings->displayTitle)) {
+            $settings->displayTitle = false;
+        }
+
+        if (!isset($settings->displayDescription)) {
+            $settings->displayDescription = false;
+        }
+
+        return gravity_form($settings->form->id, $settings->displayTitle, $settings->displayDescription, false, null, true, 1, false);
     }
 
     public static function form() {
-        return [[
-            'id'  => 'general',
-            'title'  => __('General', 'offbeatwp'),
-            'sections' => [[
-                'id' => 'general',
-                'title'  => __('Form', 'offbeatwp'),
-                'fields' => [
-                    [
-                        'name' => 'form',
-                        'label' => __('Form', 'offbeatwp'),
-                        'type' => 'gravityforms',
-                    ]
-                ]
-            ]]
-        ]];
+
+        $form = new Form();
+
+        $form->addTab('general', 'General')
+                ->addSection('general', 'General')
+                    ->addField(GravityFormsField::make('form', 'Form'));
+
+        return $form;
     }
 }
