@@ -21,7 +21,9 @@ class Service extends AbstractService
             add_filter('gform_init_scripts_footer', '__return_true');
         }
 
-        offbeat('components')->register('gravityform', Components\GravityForm::class);
+        if (apply_filters('offbeatwp/gravityforms/register_component', true)) {
+            offbeat('components')->register('gravityform', Components\GravityForm::class);
+        }
 
         $view->registerGlobal('gf', new Helpers\View());
 
