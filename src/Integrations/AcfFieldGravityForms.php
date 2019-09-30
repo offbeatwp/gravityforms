@@ -184,10 +184,13 @@ class AcfFieldGravityForms extends \acf_field
 
     public function format_value($value, $post_id, $field)
     {
-
         //Return false if value is false, null or empty
         if (!$value || empty($value)) {
             return false;
+        }
+
+        if($field['return_format'] == 'id') {
+            return $value;
         }
 
         //If there are multiple forms, construct and return an array of form objects
