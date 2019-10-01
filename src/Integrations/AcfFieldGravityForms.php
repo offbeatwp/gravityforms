@@ -189,7 +189,7 @@ class AcfFieldGravityForms extends \acf_field
             return false;
         }
 
-        if($field['return_format'] == 'id') {
+        if(isset($field['return_format']) && $field['return_format'] == 'id') {
             return $value;
         }
 
