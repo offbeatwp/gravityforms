@@ -19,6 +19,11 @@ class GravityForm extends AbstractComponent
 
     public function render($settings)
     {
+
+        if (!empty($settings->form) && is_array($settings->form)) {
+            $settings->form = (object)$settings->form;
+        }
+
         if (!is_object($settings->form) || !isset($settings->form->id)) {
             return 'No valid form';
         }
