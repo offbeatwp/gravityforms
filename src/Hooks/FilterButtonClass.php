@@ -3,7 +3,7 @@ namespace OffbeatWP\GravityForms\Hooks;
 
 class FilterButtonClass
 {
-    public function buttonClass(array $formSettings, array $form): array
+    public static function buttonClass(array $formSettings, array $form): array
     {
         $inputVal = esc_attr(rgars($form, 'button/class'));
 
