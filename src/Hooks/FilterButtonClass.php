@@ -3,26 +3,26 @@ namespace OffbeatWP\GravityForms\Hooks;
 
 class FilterButtonClass
 {
-    public function buttonClass($form_settings, $form)
+    public function buttonClass(array $formSettings, array $form): array
     {
+        $inputVal = esc_attr(rgars($form, 'button/class'));
 
-        $form_settings["Form Button"]["button_class"] = '
-            <tr id="form_button_text_setting" class="child_setting_row" style="' . $text_style_display . '">
+        $formSettings["Form Button"]["button_class"] = '
+            <tr id="form_button_text_setting" class="child_setting_row">
                 <th>
                     ' . __('Button Class', 'gravityforms') . ' ' . gform_tooltip('form_button_class', '', true) . '
                 </th>
                 <td>
-                    <input type="text" id="form_button_text_class" name="form_button_text_class" class="fieldwidth-3" value="' . esc_attr(rgars($form,
-                'button/class')) . '" />
+                    <input type="text" id="form_button_text_class" name="form_button_text_class" class="fieldwidth-3" value="' . $inputVal . '" />
                 </td>
             </tr>';
 
-        return $form_settings;
+        return $formSettings;
     }
 
-    public function buttonClassProcess($updated_form)
+    public function buttonClassProcess(array $updatedForm): array
     {
-        $updated_form['button']['class'] = rgpost('form_button_text_class');
-        return $updated_form;
+        $updatedForm['button']['class'] = rgpost('form_button_text_class');
+        return $updatedForm;
     }
 }
