@@ -1,6 +1,10 @@
 <?php
+
 namespace OffbeatWP\GravityForms;
 
+use OffbeatWP\GravityForms\Components\GravityForm;
+use OffbeatWP\GravityForms\Hooks\FilterButtonClass;
+use OffbeatWP\GravityForms\Integrations\AcfFieldGravityForms;
 use OffbeatWP\Services\AbstractService;
 use OffbeatWP\Contracts\View;
 
@@ -14,15 +18,15 @@ class Service extends AbstractService
         add_filter('gform_cdata_close', [$this, 'wrapJqueryScriptEnd']);
 
         if (is_admin()) {
-            add_filter('gform_form_settings', [ Hooks\FilterButtonClass::class, 'buttonClass' ], 10, 2);
-            add_filter('gform_pre_form_settings_save', [ Hooks\FilterButtonClass::class, 'buttonClassProcess' ], 10, 1);
+            add_filter('gform_form_settings', [FilterButtonClass::class, 'buttonClass'], 10, 2);
+            add_filter('gform_pre_form_settings_save', [FilterButtonClass::class, 'buttonClassProcess']);
             add_filter('gform_enable_field_label_visibility_settings', '__return_true');
         } else {
             add_filter('gform_init_scripts_footer', '__return_true');
         }
 
         if (apply_filters('offbeatwp/gravityforms/register_component', true)) {
-            offbeat('components')->register('gravityform', Components\GravityForm::class);
+            offbeat('components')->register('gravityform', GravityForm::class);
         }
 
         $view->registerGlobal('gf', new Helpers\View());
@@ -30,7 +34,7 @@ class Service extends AbstractService
         add_action('acf/include_field_types', [$this, 'addACFGravityFormsFieldType']);
     }
 
-    public function formActionOnAjax($formTag, $form)
+    public function formActionOnAjax(string $formTag)
     {
         if ((defined('DOING_AJAX') && DOING_AJAX) || isset($_POST['gform_ajax'])) {
             preg_match("/action='(.+)(#[^']+)'/", $formTag, $matches);
@@ -41,7 +45,7 @@ class Service extends AbstractService
         return $formTag;
     }
 
-    public static function wrapJqueryScriptStart($content = '')
+    public static function wrapJqueryScriptStart(string $content = ''): string
     {
         $backtrace = debug_backtrace();
 
@@ -49,11 +53,10 @@ class Service extends AbstractService
             return $content;
         }
 
-        $content = 'document.addEventListener("DOMContentLoaded", function() { ';
-        return $content;
+        return 'document.addEventListener("DOMContentLoaded", function() { ';
     }
 
-    public static function wrapJqueryScriptEnd($content = '')
+    public static function wrapJqueryScriptEnd(string $content = ''): string
     {
         $backtrace = debug_backtrace();
 
@@ -61,11 +64,11 @@ class Service extends AbstractService
             return $content;
         }
 
-        $content = ' }, false);';
-        return $content;
+        return ' }, false);';
     }
 
-    public function addACFGravityFormsFieldType() {
-        new Integrations\AcfFieldGravityForms();
+    public function addACFGravityFormsFieldType()
+    {
+        new AcfFieldGravityForms();
     }
 }
