@@ -20,7 +20,7 @@ class FilterButtonClass
         return $formSettings;
     }
 
-    public function buttonClassProcess(array $updatedForm): array
+    public static function buttonClassProcess(array $updatedForm): array
     {
         $updatedForm['button']['class'] = rgpost('form_button_text_class');
         return $updatedForm;
