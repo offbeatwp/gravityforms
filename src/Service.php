@@ -37,9 +37,7 @@ class Service extends AbstractService
     public function formActionOnAjax(string $formTag)
     {
         if ((defined('DOING_AJAX') && DOING_AJAX) || isset($_POST['gform_ajax'])) {
-            preg_match("/action='(.+)(#[^']+)'/", $formTag, $matches);
-
-            $formTag = str_replace($matches[0], 'action="' . $matches[2] . '"', $formTag);
+            $formTag = preg_replace("/action='(.+)(#[^']+)'/", 'action="$2"', $formTag);
         }
 
         return $formTag;
