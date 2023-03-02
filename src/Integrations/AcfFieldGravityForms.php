@@ -1,9 +1,12 @@
 <?php
 namespace OffbeatWP\GravityForms\Integrations;
 
-class AcfFieldGravityForms extends \acf_field
-{
+use acf_field;
+use GFAPI;
+use RGFormsModel;
 
+class AcfFieldGravityForms extends acf_field
+{
     /*
      *  __construct
      *
@@ -22,11 +25,11 @@ class AcfFieldGravityForms extends \acf_field
         // vars
         $this->name     = 'gravityforms';
         $this->label    = __('Gravity Forms');
-        $this->category = __("Relational", 'acf'); // Basic, Content, Choice, etc
-        $this->defaults = array(
+        $this->category = __('Relational', 'acf'); // Basic, Content, Choice, etc
+        $this->defaults = [
             'multiple' => 0,
             'allow_null'     => 0,
-        );
+        ];
         // do not delete!
         parent::__construct();
     }
@@ -46,7 +49,6 @@ class AcfFieldGravityForms extends \acf_field
 
     public function render_field_settings($field)
     {
-
         /*
          *  acf_render_field_setting
          *
@@ -57,26 +59,26 @@ class AcfFieldGravityForms extends \acf_field
          *  Please note that you must also have a matching $defaults value for the field name (font_size)
          */
 
-        acf_render_field_setting($field, array(
+        acf_render_field_setting($field, [
             'label'   => 'Allow Null?',
             'type'    => 'radio',
             'name'    => 'allow_null',
-            'choices' => array(
-                1 => __("Yes", 'acf'),
-                0 => __("No", 'acf'),
-            ),
+            'choices' => [
+                1 => __('Yes', 'acf'),
+                0 => __('No', 'acf'),
+            ],
             'layout'  => 'horizontal',
-        ));
-        acf_render_field_setting($field, array(
+        ]);
+        acf_render_field_setting($field, [
             'label'   => 'Multiple?',
             'type'    => 'radio',
             'name'    => 'multiple',
-            'choices' => array(
-                1 => __("Yes", 'acf'),
-                0 => __("No", 'acf'),
-            ),
+            'choices' => [
+                1 => __('Yes', 'acf'),
+                0 => __('No', 'acf'),
+            ],
             'layout'  => 'horizontal',
-        ));
+        ]);
     }
 
     /*
@@ -93,7 +95,6 @@ class AcfFieldGravityForms extends \acf_field
      *  @param $field (array) the $field being edited
      *  @return  n/a
      */
-
     public function render_field($field)
     {
 
@@ -104,12 +105,10 @@ class AcfFieldGravityForms extends \acf_field
 
         // vars
         $field   = array_merge($this->defaults, $field);
-        $choices = array();
+        $choices = [];
         //Show notice if Gravity Forms is not activated
         if (class_exists('\RGFormsModel')) {
-
-            $forms = \RGFormsModel::get_forms(1);
-
+            $forms = RGFormsModel::get_forms(1);
         } else {
             echo "<font style='color:red;font-weight:bold;'>Warning: Gravity Forms is not installed or activated. This field does not function without Gravity Forms!</font>";
         }
@@ -117,7 +116,7 @@ class AcfFieldGravityForms extends \acf_field
         //Prevent undefined variable notice
         if (isset($forms)) {
             foreach ($forms as $form) {
-                $choices[intval($form->id)] = ucfirst($form->title);
+                $choices[(int)$form->id] = ucfirst($form->title);
             }
         }
         // override field settings and render
@@ -125,7 +124,7 @@ class AcfFieldGravityForms extends \acf_field
         $field['type']    = 'checkbox';
         if ($field['multiple']) {
             ?>
-            <input type="hidden" name="<?= $field['name']; ?>">
+            <input type="hidden" name="<?= $field['name'] ?>">
 
             <ul class="acf-checkbox-list acf-bl">
                 <?php foreach ($field['choices'] as $key => $value): 
@@ -135,14 +134,14 @@ class AcfFieldGravityForms extends \acf_field
                     }
                     ?>
                     <li>
-                        <label><input id="acf-<?= $field['key']; ?>-<?= $key; ?>" type="checkbox" name="<?php echo $field['name']; ?>[]" value="<?= $key; ?>"<?= $checked; ?>><?= $value; ?></label>
+                        <label><input id="acf-<?= $field['key'] ?>-<?= $key ?>" type="checkbox" name="<?= $field['name'] ?>[]" value="<?= $key ?>"<?= $checked ?>><?= $value ?></label>
                     </li>
                 <?php endforeach; ?>
             </ul>
             <?php
         } else {
             ?>
-           <select id="<?php echo str_replace(array('[', ']'), array('-', ''), $field['name']); ?>" name="<?php echo $field['name']; ?>">
+           <select id="<?= str_replace(['[', ']'], ['-', ''], $field['name']) ?>" name="<?= $field['name'] ?>">
             <?php
             if ($field['allow_null']) {
                 echo '<option value="">- Select -</option>';
@@ -155,16 +154,12 @@ class AcfFieldGravityForms extends \acf_field
                 }
 
                 ?>
-                <option value="<?php echo $key; ?>"<?php echo $selected; ?>><?php echo $value; ?></option>
+                <option value="<?= $key ?>"<?= $selected ?>><?= $value ?></option>
             <?php }?>
         </select>
     <?php
-}
-
-        ?>
-
-    <?php
-}
+        }
+    }
 
     /*
      *  format_value()
@@ -181,24 +176,22 @@ class AcfFieldGravityForms extends \acf_field
      *
      *  @return  $value (mixed) the modified value
      */
-
     public function format_value($value, $post_id, $field)
     {
         //Return false if value is false, null or empty
-        if (!$value || empty($value)) {
+        if (!$value) {
             return false;
         }
 
-        if(isset($field['return_format']) && $field['return_format'] == 'id') {
+        if(isset($field['return_format']) && $field['return_format'] === 'id') {
             return $value;
         }
 
         //If there are multiple forms, construct and return an array of form objects
-        if (is_array($value) && !empty($value)) {
-
-            $form_objects = array();
+        if (is_array($value)) {
+            $form_objects = [];
             foreach ($value as $k => $v) {
-                $form = \GFAPI::get_form($v);
+                $form = GFAPI::get_form($v);
                 //Add it if it's not an error object
                 if (!is_wp_error($form)) {
                     $form_objects[$k] = $form;
@@ -207,23 +200,19 @@ class AcfFieldGravityForms extends \acf_field
             //Return false if the array is empty
             if (!empty($form_objects)) {
                 return $form_objects;
-            } else {
-                return false;
             }
+
+            return false;
 
             //Else return single form object
-        } else {
-
-            $form = \GFAPI::get_form(intval($value));
-            //Return the form object if it's not an error object. Otherwise return false.
-            if (!is_wp_error($form)) {
-                return $form;
-            } else {
-                return false;
-            }
-
         }
 
-    }
+        $form = GFAPI::get_form((int)$value);
+        //Return the form object if it's not an error object. Otherwise return false.
+        if (!is_wp_error($form)) {
+            return $form;
+        }
 
+        return false;
+    }
 }
