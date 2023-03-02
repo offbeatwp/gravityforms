@@ -21,6 +21,8 @@ class Service extends AbstractService
             add_filter('gform_form_settings', [FilterButtonClass::class, 'buttonClass'], 10, 2);
             add_filter('gform_pre_form_settings_save', [FilterButtonClass::class, 'buttonClassProcess']);
             add_filter('gform_enable_field_label_visibility_settings', '__return_true');
+        } else {
+            add_filter('gform_init_scripts_footer', '__return_true');
         }
 
         if (apply_filters('offbeatwp/gravityforms/register_component', true)) {
@@ -49,7 +51,7 @@ class Service extends AbstractService
     {
         $backtrace = debug_backtrace();
 
-        if ((defined('DOING_AJAX') && DOING_AJAX) || isset($_POST['gform_ajax']) || $backtrace[3]['function'] != 'get_form') {
+        if ((defined('DOING_AJAX') && DOING_AJAX) || isset($_POST['gform_ajax']) || $backtrace[3]['function'] !== 'get_form') {
             return $content;
         }
 
@@ -60,7 +62,7 @@ class Service extends AbstractService
     {
         $backtrace = debug_backtrace();
 
-        if ((defined('DOING_AJAX') && DOING_AJAX) || isset($_POST['gform_ajax']) || $backtrace[3]['function'] != 'get_form') {
+        if ((defined('DOING_AJAX') && DOING_AJAX) || isset($_POST['gform_ajax']) || $backtrace[3]['function'] !== 'get_form') {
             return $content;
         }
 
