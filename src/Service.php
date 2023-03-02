@@ -21,8 +21,6 @@ class Service extends AbstractService
             add_filter('gform_form_settings', [FilterButtonClass::class, 'buttonClass'], 10, 2);
             add_filter('gform_pre_form_settings_save', [FilterButtonClass::class, 'buttonClassProcess']);
             add_filter('gform_enable_field_label_visibility_settings', '__return_true');
-        } else {
-            add_filter('gform_init_scripts_footer', '__return_true');
         }
 
         if (apply_filters('offbeatwp/gravityforms/register_component', true)) {
@@ -31,7 +29,9 @@ class Service extends AbstractService
 
         $view->registerGlobal('gf', new Helpers\View());
 
-        add_action('acf/include_field_types', [$this, 'addACFGravityFormsFieldType']);
+        if (class_exists('GFAPI')) {
+            add_action('acf/include_field_types', [$this, 'addACFGravityFormsFieldType']);
+        }
     }
 
     public function formActionOnAjax(string $formTag)
