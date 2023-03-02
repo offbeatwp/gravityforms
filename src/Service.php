@@ -31,7 +31,9 @@ class Service extends AbstractService
 
         $view->registerGlobal('gf', new Helpers\View());
 
-        add_action('acf/include_field_types', [$this, 'addACFGravityFormsFieldType']);
+        if (class_exists('GFAPI')) {
+            add_action('acf/include_field_types', [$this, 'addACFGravityFormsFieldType']);
+        }
     }
 
     public function formActionOnAjax(string $formTag)
@@ -47,7 +49,7 @@ class Service extends AbstractService
     {
         $backtrace = debug_backtrace();
 
-        if ((defined('DOING_AJAX') && DOING_AJAX) || isset($_POST['gform_ajax']) || $backtrace[3]['function'] != 'get_form') {
+        if ((defined('DOING_AJAX') && DOING_AJAX) || isset($_POST['gform_ajax']) || $backtrace[3]['function'] !== 'get_form') {
             return $content;
         }
 
@@ -58,7 +60,7 @@ class Service extends AbstractService
     {
         $backtrace = debug_backtrace();
 
-        if ((defined('DOING_AJAX') && DOING_AJAX) || isset($_POST['gform_ajax']) || $backtrace[3]['function'] != 'get_form') {
+        if ((defined('DOING_AJAX') && DOING_AJAX) || isset($_POST['gform_ajax']) || $backtrace[3]['function'] !== 'get_form') {
             return $content;
         }
 
