@@ -8,7 +8,7 @@ use OffbeatWP\GravityForms\Integrations\AcfFieldGravityForms;
 use OffbeatWP\Services\AbstractService;
 use OffbeatWP\Contracts\View;
 
-class Service extends AbstractService
+final class Service extends AbstractService
 {
     public function register(View $view)
     {
@@ -34,6 +34,40 @@ class Service extends AbstractService
         if (class_exists('GFAPI')) {
             add_action('acf/include_field_types', [$this, 'addACFGravityFormsFieldType']);
         }
+
+        add_action('gform_field_appearance_settings', function (int $position, int $formId) {
+            if ($position === 50) {  ?>
+                <li class="vg_button_style_setting field_setting">
+                    <label for="field_admin_label">
+                        <?= esc_html__('Button style') ?>
+                    </label>
+
+                    <select id="field_vg_button_style_input" onchange="SetFieldProperty('vgButtonStyleInput', this.value)">
+                        <option value="primary">Primary</option>
+                        <option value="secondary">Secondary</option>
+                        <option value="success">Success</option>
+                        <option value="danger">Danger</option>
+                        <option value="warning">Warning</option>
+                        <option value="info">Info</option>
+                        <option value="light">Light</option>
+                        <option value="dark">Dark</option>
+                    </select>
+                </li>
+            <?php }
+        }, 10, 2);
+
+        add_action('gform_editor_js', function() {
+            ?>
+            <script type="text/javascript">
+                fieldSettings.submit += ', .vg_button_style_setting';
+
+                jQuery(document).on("gform_load_field_settings", (event, field) => {
+                    console.log(field);
+                    jQuery("#field_vg_button_style_input").val(field["vgButtonStyleInput"]);
+                });
+            </script>
+            <?php
+        });
     }
 
     public function formActionOnAjax(string $formTag)

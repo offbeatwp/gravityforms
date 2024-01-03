@@ -5,7 +5,7 @@ use acf_field;
 use GFAPI;
 use RGFormsModel;
 
-class AcfFieldGravityForms extends acf_field
+final class AcfFieldGravityForms extends acf_field
 {
     /*
      *  __construct

@@ -1,7 +1,7 @@
 <?php
 namespace OffbeatWP\GravityForms\Hooks;
 
-class FilterButtonClass
+final class FilterButtonClass
 {
     public static function buttonClass(array $formSettings, array $form): array
     {
