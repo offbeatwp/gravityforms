@@ -3,6 +3,7 @@
 namespace OffbeatWP\GravityForms;
 
 use OffbeatWP\GravityForms\Components\GravityForm;
+use OffbeatWP\GravityForms\Hooks\FilterButtonClass;
 use OffbeatWP\GravityForms\Integrations\AcfFieldGravityForms;
 use OffbeatWP\Services\AbstractService;
 use OffbeatWP\Contracts\View;
@@ -16,6 +17,8 @@ final class Service extends AbstractService
         add_filter('gform_cdata_close', [$this, 'wrapJqueryScriptEnd']);
 
         if (is_admin()) {
+            add_filter('gform_form_settings', [FilterButtonClass::class, 'buttonClass'], 10, 2);
+            add_filter('gform_pre_form_settings_save', [FilterButtonClass::class, 'buttonClassProcess']);
             add_filter('gform_enable_field_label_visibility_settings', '__return_true');
         } else {
             add_filter('gform_init_scripts_footer', '__return_true');
@@ -31,38 +34,38 @@ final class Service extends AbstractService
             add_action('acf/include_field_types', [$this, 'addACFGravityFormsFieldType']);
         }
 
-        add_action('gform_field_appearance_settings', function (int $position) {
-            $styles = config('button.styles');
-
-            if ($position === 50 && is_iterable($styles)) {  ?>
-                <li class="vg_button_style_setting field_setting">
-                    <label for="field_admin_label">
-                        <?= esc_html__('Button style') ?>
-                    </label>
-
-                    <select id="field_vg_button_style_input" onchange="console.log(SetFieldProperty, 'vgButtonStyle', this.value);SetFieldProperty('vgButtonStyle', this.value);">
-                        <?php foreach ($styles as $value => $label) { ?>
-                            <option value="<?= esc_html($value) ?>"><?= htmlentities($label) ?></option>
-                        <?php } ?>
-                    </select>
-                </li>
-            <?php }
-        });
-
-        add_action('gform_editor_js', function() {
-            ?>
-            <script type="text/javascript">
-                fieldSettings.submit += ', .vg_button_style_setting';
-
-                jQuery(document).on("gform_load_field_settings", (event, field) => {
-                    console.log(document.querySelector('#field_vg_button_style_input'), field);
-                    if (field["vgButtonStyle"] !== undefined) {
-                        document.querySelector('#field_vg_button_style_input').value = field["vgButtonStyle"];
-                    }
-                });
-            </script>
-            <?php
-        });
+//        add_action('gform_field_appearance_settings', function (int $position) {
+//            $styles = config('button.styles');
+//
+//            if ($position === 50 && is_iterable($styles)) {  ?>
+<!--                <li class="vg_button_style_setting field_setting">-->
+<!--                    <label for="field_admin_label">-->
+<!--                        --><?php //= esc_html__('Button style') ?>
+<!--                    </label>-->
+<!---->
+<!--                    <select id="field_vg_button_style_input" onchange="console.log(SetFieldProperty, 'vgButtonStyle', this.value);SetFieldProperty('vgButtonStyle', this.value);">-->
+<!--                        --><?php //foreach ($styles as $value => $label) { ?>
+<!--                            <option value="--><?php //= esc_html($value) ?><!--">--><?php //= htmlentities($label) ?><!--</option>-->
+<!--                        --><?php //} ?>
+<!--                    </select>-->
+<!--                </li>-->
+<!--            --><?php //}
+//        });
+//
+//        add_action('gform_editor_js', function() {
+//            ?>
+<!--            <script type="text/javascript">-->
+<!--                fieldSettings.submit += ', .vg_button_style_setting';-->
+<!---->
+<!--                jQuery(document).on("gform_load_field_settings", (event, field) => {-->
+<!--                    console.log(document.querySelector('#field_vg_button_style_input'), field);-->
+<!--                    if (field["vgButtonStyle"] !== undefined) {-->
+<!--                        document.querySelector('#field_vg_button_style_input').value = field["vgButtonStyle"];-->
+<!--                    }-->
+<!--                });-->
+<!--            </script>-->
+<!--            --><?php
+//        });
     }
 
     public function formActionOnAjax(string $formTag): ?string
