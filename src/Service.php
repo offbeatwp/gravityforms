@@ -31,26 +31,23 @@ final class Service extends AbstractService
             add_action('acf/include_field_types', [$this, 'addACFGravityFormsFieldType']);
         }
 
-        add_action('gform_field_appearance_settings', function (int $position, int $formId) {
-            if ($position === 50) {  ?>
+        add_action('gform_field_appearance_settings', function (int $position) {
+            $styles = config('button.styles');
+
+            if ($position === 50 && is_iterable($styles)) {  ?>
                 <li class="vg_button_style_setting field_setting">
                     <label for="field_admin_label">
                         <?= esc_html__('Button style') ?>
                     </label>
 
-                    <select id="field_vg_button_style_input" onchange="SetFieldProperty('vgButtonStyleInput', this.value)">
-                        <option value="primary">Primary</option>
-                        <option value="secondary">Secondary</option>
-                        <option value="success">Success</option>
-                        <option value="danger">Danger</option>
-                        <option value="warning">Warning</option>
-                        <option value="info">Info</option>
-                        <option value="light">Light</option>
-                        <option value="dark">Dark</option>
+                    <select id="field_vg_button_style_input" onchange="console.log(SetFieldProperty, 'vgButtonStyle', this.value);SetFieldProperty('vgButtonStyle', this.value);">
+                        <?php foreach ($styles as $value => $label) { ?>
+                            <option value="<?= esc_html($value) ?>"><?= htmlentities($label) ?></option>
+                        <?php } ?>
                     </select>
                 </li>
             <?php }
-        }, 10, 2);
+        });
 
         add_action('gform_editor_js', function() {
             ?>
@@ -58,8 +55,10 @@ final class Service extends AbstractService
                 fieldSettings.submit += ', .vg_button_style_setting';
 
                 jQuery(document).on("gform_load_field_settings", (event, field) => {
-                    console.log(field);
-                    jQuery("#field_vg_button_style_input").val(field["vgButtonStyleInput"]);
+                    console.log(document.querySelector('#field_vg_button_style_input'), field);
+                    if (field["vgButtonStyle"] !== undefined) {
+                        document.querySelector('#field_vg_button_style_input').value = field["vgButtonStyle"];
+                    }
                 });
             </script>
             <?php
