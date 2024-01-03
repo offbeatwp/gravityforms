@@ -8,12 +8,11 @@ use OffbeatWP\GravityForms\Integrations\AcfFieldGravityForms;
 use OffbeatWP\Services\AbstractService;
 use OffbeatWP\Contracts\View;
 
-class Service extends AbstractService
+final class Service extends AbstractService
 {
     public function register(View $view)
     {
-        add_filter('gform_form_tag', [$this, 'formActionOnAjax'], 10, 2);
-
+        add_filter('gform_form_tag', [$this, 'formActionOnAjax']);
         add_filter('gform_cdata_open', [$this, 'wrapJqueryScriptStart']);
         add_filter('gform_cdata_close', [$this, 'wrapJqueryScriptEnd']);
 
@@ -34,9 +33,42 @@ class Service extends AbstractService
         if (class_exists('GFAPI')) {
             add_action('acf/include_field_types', [$this, 'addACFGravityFormsFieldType']);
         }
+
+//        add_action('gform_field_appearance_settings', function (int $position) {
+//            $styles = config('button.styles');
+//
+//            if ($position === 50 && is_iterable($styles)) {  ?>
+<!--                <li class="vg_button_style_setting field_setting">-->
+<!--                    <label for="field_admin_label">-->
+<!--                        --><?php //= esc_html__('Button style') ?>
+<!--                    </label>-->
+<!---->
+<!--                    <select id="field_vg_button_style_input" onchange="console.log(SetFieldProperty, 'vgButtonStyle', this.value);SetFieldProperty('vgButtonStyle', this.value);">-->
+<!--                        --><?php //foreach ($styles as $value => $label) { ?>
+<!--                            <option value="--><?php //= esc_html($value) ?><!--">--><?php //= htmlentities($label) ?><!--</option>-->
+<!--                        --><?php //} ?>
+<!--                    </select>-->
+<!--                </li>-->
+<!--            --><?php //}
+//        });
+//
+//        add_action('gform_editor_js', function() {
+//            ?>
+<!--            <script type="text/javascript">-->
+<!--                fieldSettings.submit += ', .vg_button_style_setting';-->
+<!---->
+<!--                jQuery(document).on("gform_load_field_settings", (event, field) => {-->
+<!--                    console.log(document.querySelector('#field_vg_button_style_input'), field);-->
+<!--                    if (field["vgButtonStyle"] !== undefined) {-->
+<!--                        document.querySelector('#field_vg_button_style_input').value = field["vgButtonStyle"];-->
+<!--                    }-->
+<!--                });-->
+<!--            </script>-->
+<!--            --><?php
+//        });
     }
 
-    public function formActionOnAjax(string $formTag)
+    public function formActionOnAjax(string $formTag): ?string
     {
         if ((defined('DOING_AJAX') && DOING_AJAX) || isset($_POST['gform_ajax'])) {
             $formTag = preg_replace("/action='(.+)(#[^']+)'/", 'action="$2"', $formTag);
@@ -47,7 +79,7 @@ class Service extends AbstractService
 
     public static function wrapJqueryScriptStart(string $content = ''): string
     {
-        $backtrace = debug_backtrace();
+        $backtrace = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, 3);
 
         if ((defined('DOING_AJAX') && DOING_AJAX) || isset($_POST['gform_ajax']) || $backtrace[3]['function'] !== 'get_form') {
             return $content;
@@ -58,7 +90,7 @@ class Service extends AbstractService
 
     public static function wrapJqueryScriptEnd(string $content = ''): string
     {
-        $backtrace = debug_backtrace();
+        $backtrace = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, 3);
 
         if ((defined('DOING_AJAX') && DOING_AJAX) || isset($_POST['gform_ajax']) || $backtrace[3]['function'] !== 'get_form') {
             return $content;
@@ -67,7 +99,7 @@ class Service extends AbstractService
         return ' }, false);';
     }
 
-    public function addACFGravityFormsFieldType()
+    public function addACFGravityFormsFieldType(): void
     {
         new AcfFieldGravityForms();
     }
