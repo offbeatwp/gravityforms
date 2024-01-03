@@ -3,7 +3,6 @@
 namespace OffbeatWP\GravityForms;
 
 use OffbeatWP\GravityForms\Components\GravityForm;
-use OffbeatWP\GravityForms\Hooks\FilterButtonClass;
 use OffbeatWP\GravityForms\Integrations\AcfFieldGravityForms;
 use OffbeatWP\Services\AbstractService;
 use OffbeatWP\Contracts\View;
@@ -12,14 +11,11 @@ final class Service extends AbstractService
 {
     public function register(View $view)
     {
-        add_filter('gform_form_tag', [$this, 'formActionOnAjax'], 10, 2);
-
+        add_filter('gform_form_tag', [$this, 'formActionOnAjax']);
         add_filter('gform_cdata_open', [$this, 'wrapJqueryScriptStart']);
         add_filter('gform_cdata_close', [$this, 'wrapJqueryScriptEnd']);
 
         if (is_admin()) {
-            add_filter('gform_form_settings', [FilterButtonClass::class, 'buttonClass'], 10, 2);
-            add_filter('gform_pre_form_settings_save', [FilterButtonClass::class, 'buttonClassProcess']);
             add_filter('gform_enable_field_label_visibility_settings', '__return_true');
         } else {
             add_filter('gform_init_scripts_footer', '__return_true');
@@ -70,7 +66,7 @@ final class Service extends AbstractService
         });
     }
 
-    public function formActionOnAjax(string $formTag)
+    public function formActionOnAjax(string $formTag): ?string
     {
         if ((defined('DOING_AJAX') && DOING_AJAX) || isset($_POST['gform_ajax'])) {
             $formTag = preg_replace("/action='(.+)(#[^']+)'/", 'action="$2"', $formTag);
@@ -81,7 +77,7 @@ final class Service extends AbstractService
 
     public static function wrapJqueryScriptStart(string $content = ''): string
     {
-        $backtrace = debug_backtrace();
+        $backtrace = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, 3);
 
         if ((defined('DOING_AJAX') && DOING_AJAX) || isset($_POST['gform_ajax']) || $backtrace[3]['function'] !== 'get_form') {
             return $content;
@@ -92,7 +88,7 @@ final class Service extends AbstractService
 
     public static function wrapJqueryScriptEnd(string $content = ''): string
     {
-        $backtrace = debug_backtrace();
+        $backtrace = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, 3);
 
         if ((defined('DOING_AJAX') && DOING_AJAX) || isset($_POST['gform_ajax']) || $backtrace[3]['function'] !== 'get_form') {
             return $content;
@@ -101,7 +97,7 @@ final class Service extends AbstractService
         return ' }, false);';
     }
 
-    public function addACFGravityFormsFieldType()
+    public function addACFGravityFormsFieldType(): void
     {
         new AcfFieldGravityForms();
     }
