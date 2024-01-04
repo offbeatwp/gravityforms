@@ -3,7 +3,6 @@
 namespace OffbeatWP\GravityForms;
 
 use OffbeatWP\GravityForms\Components\GravityForm;
-use OffbeatWP\GravityForms\Hooks\FilterButtonClass;
 use OffbeatWP\GravityForms\Integrations\AcfFieldGravityForms;
 use OffbeatWP\Services\AbstractService;
 use OffbeatWP\Contracts\View;
@@ -17,8 +16,6 @@ final class Service extends AbstractService
         add_filter('gform_cdata_close', [$this, 'wrapJqueryScriptEnd']);
 
         if (is_admin()) {
-            add_filter('gform_form_settings', [FilterButtonClass::class, 'buttonClass'], 10, 2);
-            add_filter('gform_pre_form_settings_save', [FilterButtonClass::class, 'buttonClassProcess']);
             add_filter('gform_enable_field_label_visibility_settings', '__return_true');
         } else {
             add_filter('gform_init_scripts_footer', '__return_true');
@@ -33,6 +30,48 @@ final class Service extends AbstractService
         if (class_exists('GFAPI')) {
             add_action('acf/include_field_types', [$this, 'addACFGravityFormsFieldType']);
         }
+
+        add_action('gform_field_standard_settings', function (int $position) {
+            $styles = config('button.styles');
+
+            if ($position === 25 && is_iterable($styles)) { ?>
+                <li class="vg_button_style_setting field_setting">
+                    <label for="field_vg_button_style_value">
+                        <?= __('Button Class', 'gravityforms') ?>
+                    </label>
+
+                    <select id="field_vg_button_style_input" onchange="window.vollegrondGformButtonStyle = this.value;">
+                        <?php foreach ($styles as $value => $label) { ?>
+                            <option value="<?= esc_html($value) ?>">
+                                <?= htmlentities($label) ?>
+                            </option>
+                        <?php } ?>
+                    </select>
+                </li>
+            <?php }
+        });
+
+        add_action('gform_editor_js', function() {
+            ?>
+            <script type="text/javascript">
+                fieldSettings.submit += ', .vg_button_style_setting';
+
+                jQuery(document).on("gform_load_field_settings", (event, field, form) => {
+                    if (form.button.class) {
+                        document.querySelector('#field_vg_button_style_input').value = form.button.class;
+                    }
+                });
+
+                gform.addFilter('gform_pre_form_editor_save', function (form) {
+                    if (window.vollegrondGformButtonStyle) {
+                        form.button.class = window.vollegrondGformButtonStyle;
+                    }
+
+                    return form;
+                });
+            </script>
+            <?php
+        });
     }
 
     public function formActionOnAjax(string $formTag): ?string
