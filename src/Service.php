@@ -56,9 +56,9 @@ final class Service extends AbstractService
             <script type="text/javascript">
                 fieldSettings.submit += ', .vg_button_style_setting';
 
-                jQuery(document).on("gform_load_field_settings", (event, field, form) => {
+                jQuery(document).on("gform_load_field_settings", function (event, field, form) {
                     if (form.button.class) {
-                        document.querySelector('#field_vg_button_style_input').value = form.button.class;
+                        document.getElementById('field_vg_button_style_input').value = form.button.class;
                     }
                 });
 
