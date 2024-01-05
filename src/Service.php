@@ -42,8 +42,8 @@ final class Service extends AbstractService
 
                     <select id="field_vg_button_style_input" onchange="window.vollegrondGformButtonStyle = this.value;">
                         <?php foreach ($styles as $value => $label) { ?>
-                            <option value="<?= esc_html($value) ?>">
-                                <?= htmlentities($label) ?>
+                            <option value="<?= esc_attr($value) ?>">
+                                <?= esc_html($label) ?>
                             </option>
                         <?php } ?>
                     </select>
