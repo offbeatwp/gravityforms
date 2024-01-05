@@ -47,7 +47,7 @@ final class AcfFieldGravityForms extends acf_field
      *  @return  n/a
      */
 
-    public function render_field_settings($field)
+    public function render_field_settings(array $field)
     {
         /*
          *  acf_render_field_setting
@@ -95,7 +95,7 @@ final class AcfFieldGravityForms extends acf_field
      *  @param $field (array) the $field being edited
      *  @return  n/a
      */
-    public function render_field($field)
+    public function render_field(array $field)
     {
 
         /*
@@ -176,7 +176,7 @@ final class AcfFieldGravityForms extends acf_field
      *
      *  @return  $value (mixed) the modified value
      */
-    public function format_value($value, $post_id, $field)
+    public function format_value($value, $post_id, array $field)
     {
         //Return false if value is false, null or empty
         if (!$value) {

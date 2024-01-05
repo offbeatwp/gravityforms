@@ -14,5 +14,8 @@
             "OffbeatWP\\GravityForms\\": "src"
         }
     },
-    "require": {}
+    "require-dev": {
+        "php-stubs/acf-pro-stubs": "^6.1",
+        "php-stubs/gravity-forms-stubs": "^2.7"
+    }
 }
