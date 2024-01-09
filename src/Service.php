@@ -58,7 +58,10 @@ final class Service extends AbstractService
 
                 jQuery(document).on("gform_load_field_settings", function (event, field, form) {
                     if (form.button.class) {
-                        document.getElementById('field_vg_button_style_input').value = form.button.class;
+                        const buttonStyleInput = document.getElementById('field_vg_button_style_input');
+                        if (buttonStyleInput) {
+                            buttonStyleInput.value = form.button.class;
+                        }
                     }
                 });
 
