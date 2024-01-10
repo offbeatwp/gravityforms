@@ -31,7 +31,7 @@ final class Service extends AbstractService
             add_action('acf/include_field_types', [$this, 'addACFGravityFormsFieldType']);
         }
 
-        add_action('gform_field_standard_settings', function (int $position) {
+        add_action('gform_field_appearance_settings', function (int $position) {
             $styles = config('button.styles');
 
             if ($position === 25 && is_iterable($styles)) { ?>
