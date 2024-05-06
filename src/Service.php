@@ -32,12 +32,16 @@ final class Service extends AbstractService
         }
 
         add_action('gform_field_standard_settings', function (int $position) {
+            if ($position !== 25) {
+                return;
+            }
+
             $styles = config('button.styles');
 
-            if ($position === 25 && is_iterable($styles)) { ?>
-                <li class="vg_button_style_setting field_setting">
-                    <label for="field_vg_button_style_value">
-                        <?= __('Button Class', 'gravityforms') ?>
+            if (is_iterable($styles)) { ?>
+                <li id="field_vg_button_style_container" class="vg_button_style_setting field_setting">
+                    <label for="field_vg_button_style_input">
+                        <?= __('Button Type', 'gravityforms') ?>
                     </label>
 
                     <select id="field_vg_button_style_input" onchange="window.vollegrondGformButtonStyle = this.value;">
@@ -48,30 +52,80 @@ final class Service extends AbstractService
                         <?php } ?>
                     </select>
                 </li>
-            <?php }
-        });
+            <?php } ?>
+
+            <li class="vg_button_class_setting field_setting">
+                <input type="checkbox" id="field_vg_button_enable_custom_class_input" onclick="changeButtonStyleDisplay(this.checked); window.enableCustomClass = this.checked;"/>
+                <label for="field_vg_button_enable_custom_class_input" class="inline">
+                    <?= __('Enable custom classes', 'gravityforms') ?>
+                </label>
+                <br/>
+                <div id="field_vg_button_class_container" style="display:none; padding-top:10px;">
+                    <div class="vg_button_class_setting field_setting">
+                        <label for="field_vg_button_class_input">
+                            <?= __('Button Class', 'gravityforms') ?>
+                        </label>
+                        <input type="text" id="field_vg_button_class_input" onchange="window.vollegrondGformButtonClass = this.value;">
+                    </div>
+                </div>
+            </li>
+
+            <?php });
 
         add_action('gform_editor_js', function() {
             ?>
             <script type="text/javascript">
-                fieldSettings.submit += ', .vg_button_style_setting';
+                fieldSettings.submit += ', .vg_button_style_setting, .vg_button_class_setting';
 
                 jQuery(document).on("gform_load_field_settings", function (event, field, form) {
-                    if (form.button.class) {
-                        const buttonStyleInput = document.getElementById('field_vg_button_style_input');
-                        if (buttonStyleInput) {
-                            buttonStyleInput.value = form.button.class;
-                        }
+                    const { button } = form;
+
+                    const buttonStyleInput = document.getElementById('field_vg_button_style_input');
+                    const buttonCustomClassCheckbox = document.getElementById('field_vg_button_enable_custom_class_input');
+                    const buttonClassInput = document.getElementById('field_vg_button_class_input');
+
+                    if (buttonStyleInput) {
+                        buttonStyleInput.value = button.class;
+                    }
+
+                    if (buttonCustomClassCheckbox) {
+                        buttonCustomClassCheckbox.checked = button.customClassEnabled;
+                    }
+
+                    if (buttonClassInput) {
+                        buttonClassInput.value = button.class;
+                    }
+
+                    if (button.customClassEnabled) {
+                        changeButtonStyleDisplay(true);
                     }
                 });
 
                 gform.addFilter('gform_pre_form_editor_save', function (form) {
-                    if (window.vollegrondGformButtonStyle) {
-                        form.button.class = window.vollegrondGformButtonStyle;
+                    const { button } = form;
+
+                    button.class = window.vollegrondGformButtonStyle || button.class;
+                    button.customClassEnabled = window.enableCustomClass ?? button.customClassEnabled;
+
+                    if (button.customClassEnabled) {
+                        button.class = window.vollegrondGformButtonClass || button.class;
                     }
 
                     return form;
                 });
+
+                function changeButtonStyleDisplay(state) {
+                    const buttonClassInputContainer = document.getElementById('field_vg_button_class_container');
+                    const buttonStyleInputContainer = document.getElementById('field_vg_button_style_container');
+
+                    if (buttonClassInputContainer) {
+                        buttonClassInputContainer.style.display = state ? '' : 'none';
+                    }
+
+                    if (buttonStyleInputContainer) {
+                        buttonStyleInputContainer.style.display = state ? 'none' : '';
+                    }
+                }
             </script>
             <?php
         });
