@@ -14,8 +14,12 @@
             "OffbeatWP\\GravityForms\\": "src"
         }
     },
+    "require": {
+        "php": ">=8.1",
+        "offbeatwp/framework": "^3.0.0"
+    },
     "require-dev": {
-        "php-stubs/acf-pro-stubs": "^6.1",
-        "php-stubs/gravity-forms-stubs": "^2.7"
+        "php-stubs/acf-pro-stubs": "^v6.3.10",
+        "php-stubs/gravity-forms-stubs": "^v2.9.3"
     }
 }
