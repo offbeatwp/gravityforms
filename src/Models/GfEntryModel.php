@@ -9,7 +9,7 @@ final class GfEntryModel
 {
     /** @var mixed[] */
     private array $entry;
-    private readonly GfFormModel $form;
+    public readonly GfFormModel $form;
     /** @var array<string, string|null> */
     private array $fieldsMapping = [];
 
@@ -34,11 +34,6 @@ final class GfEntryModel
     public function getFormId(): int
     {
         return (int)$this->entry['form_id'];
-    }
-
-    public function getForm(): GfFormModel
-    {
-        return $this->form;
     }
 
     public function getSourceUrl(): string
