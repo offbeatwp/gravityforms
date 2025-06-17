@@ -9,7 +9,7 @@ use OffbeatWP\Contracts\View;
 
 final class Service extends AbstractService
 {
-    public function register(View $view)
+    public function register(View $view): void
     {
         add_filter('gform_form_tag', [$this, 'formActionOnAjax']);
         add_filter('gform_cdata_open', [$this, 'wrapJqueryScriptStart']);
@@ -57,13 +57,13 @@ final class Service extends AbstractService
             <li class="vg_button_class_setting field_setting">
                 <input type="checkbox" id="field_vg_button_enable_custom_class_input" onclick="changeButtonStyleDisplay(this.checked); window.enableCustomClass = this.checked;"/>
                 <label for="field_vg_button_enable_custom_class_input" class="inline">
-                    <?= __('Enable custom classes', 'gravityforms') ?>
+                    <?= esc_html__('Enable custom classes', 'gravityforms') ?>
                 </label>
                 <br/>
                 <div id="field_vg_button_class_container" style="display:none; padding-top:10px;">
                     <div class="vg_button_class_setting field_setting">
                         <label for="field_vg_button_class_input">
-                            <?= __('Button Class', 'gravityforms') ?>
+                            <?= esc_html__('Button Class', 'gravityforms') ?>
                         </label>
                         <input type="text" id="field_vg_button_class_input" onchange="window.vollegrondGformButtonClass = this.value;">
                     </div>
@@ -133,7 +133,7 @@ final class Service extends AbstractService
 
     public function formActionOnAjax(string $formTag): ?string
     {
-        if ((defined('DOING_AJAX') && DOING_AJAX) || isset($_POST['gform_ajax'])) {
+        if (wp_doing_ajax() || isset($_POST['gform_ajax'])) {
             $formTag = preg_replace("/action='(.+)(#[^']+)'/", 'action="$2"', $formTag);
         }
 
@@ -144,7 +144,7 @@ final class Service extends AbstractService
     {
         $backtrace = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, 4);
 
-        if ((defined('DOING_AJAX') && DOING_AJAX) || isset($_POST['gform_ajax']) || $backtrace[3]['function'] !== 'get_form') {
+        if (wp_doing_ajax() || isset($_POST['gform_ajax']) || $backtrace[3]['function'] !== 'get_form') {
             return $content;
         }
 
@@ -155,7 +155,7 @@ final class Service extends AbstractService
     {
         $backtrace = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, 4);
 
-        if ((defined('DOING_AJAX') && DOING_AJAX) || isset($_POST['gform_ajax']) || $backtrace[3]['function'] !== 'get_form') {
+        if (wp_doing_ajax() || isset($_POST['gform_ajax']) || $backtrace[3]['function'] !== 'get_form') {
             return $content;
         }
 

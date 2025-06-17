@@ -5,18 +5,22 @@ namespace OffbeatWP\GravityForms\Models;
 use GFAPI;
 use WP_Error;
 
-final class GravityFormsEntryModel
+final class GfEntryModel
 {
-    protected array $entry;
-    protected readonly GravityFormsFormModel $form;
-    protected array $fieldsMapping = [];
+    /** @var mixed[] */
+    private array $entry;
+    private readonly GfFormModel $form;
+    /** @var array<string, string|null> */
+    private array $fieldsMapping = [];
 
-    public function __construct(array $entry, GravityFormsFormModel $form)
+    /** @param mixed[] $entry */
+    public function __construct(array $entry, GfFormModel $form)
     {
         $this->entry = $entry;
         $this->form = $form;
     }
 
+    /** @return mixed[] */
     public function getEntry(): array
     {
         return $this->entry;
@@ -32,7 +36,7 @@ final class GravityFormsEntryModel
         return (int)$this->entry['form_id'];
     }
 
-    public function getForm(): GravityFormsFormModel
+    public function getForm(): GfFormModel
     {
         return $this->form;
     }
@@ -86,7 +90,7 @@ final class GravityFormsEntryModel
         return GFAPI::delete_entry($this->entry['id']);
     }
 
-    public static function find(int $entryId, ?GravityFormsFormModel $form = null): ?static
+    public static function find(int $entryId, ?GfFormModel $form = null): ?static
     {
         if ($entryId > 0) {
             $entry = GFAPI::get_entry($entryId);
@@ -95,7 +99,7 @@ final class GravityFormsEntryModel
                 $formId = filter_var($entry['form_id'], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
 
                 if ($formId) {
-                    $form = $form ?? GravityFormsFormModel::find($formId);
+                    $form = $form ?? GfFormModel::find($formId);
 
                     if ($form && $form->getId() === $formId) {
                         return new static($entry, $form);

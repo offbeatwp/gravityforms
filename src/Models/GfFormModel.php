@@ -5,12 +5,14 @@ namespace OffbeatWP\GravityForms\Models;
 use GF_Field;
 use GFAPI;
 
-final class GravityFormsFormModel
+final class GfFormModel
 {
-    protected readonly array $form;
-    /** @var array<string, array{key: ?string, field?: GF_Field}> */
-    protected array $mappedFields;
+    /** @var mixed[] */
+    private readonly array $form;
+    /** @var array<string, array{key: ?int, field: ?GF_Field}> */
+    private array $mappedFields;
 
+    /** @param mixed[] $form */
     public function __construct(array $form)
     {
         $this->form = $form;
@@ -38,15 +40,16 @@ final class GravityFormsFormModel
         return $this->form['fields'];
     }
 
-    /** @return array{key: ?string, field: ?GF_Field} */
+    /** @return array{key: ?int, field: ?GF_Field} */
     private function findByInputName(string $inputName): array
     {
         if (!array_key_exists($inputName, $this->mappedFields)) {
             $this->mappedFields[$inputName] = ['key' => null, 'field' => null];
 
+            /** @var GF_Field $field */
             foreach ($this->form['fields'] as $field) {
                 if ($field->inputName === $inputName) {
-                    $this->mappedFields[$inputName] = ['key' => $field->id, 'field' => $field];
+                    $this->mappedFields[$inputName] = ['key' => (int)$field->id, 'field' => $field];
                     break;
                 }
             }
