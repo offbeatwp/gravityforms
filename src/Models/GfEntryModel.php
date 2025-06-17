@@ -31,26 +31,6 @@ final class GfEntryModel
         return (int)$this->entry['id'];
     }
 
-    public function getFormId(): int
-    {
-        return (int)$this->entry['form_id'];
-    }
-
-    public function getSourceUrl(): string
-    {
-        return $this->entry['source_url'];
-    }
-
-    public function getDateCreated(): string
-    {
-        return $this->entry['date_created'];
-    }
-
-    public function getRequestId(): ?int
-    {
-        return $this->entry['request_id'] ?? null;
-    }
-
     private function findValueByInputName(string $inputName): ?string
     {
         $fieldKey = $this->form->getFieldKeyByInputName($inputName);
