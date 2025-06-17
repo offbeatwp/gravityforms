@@ -3,6 +3,9 @@
     "description": "Adding some GravityForms functionality",
     "license": "MIT",
     "type": "offbeatwp-service",
+    "scripts": {
+        "phpstan": "php vendor/bin/phpstan analyse --memory-limit=1G"
+    },
     "authors": [
         {
             "name": "Chris Schrijver",
@@ -20,6 +23,8 @@
     },
     "require-dev": {
         "php-stubs/acf-pro-stubs": "^v6.3.10",
-        "php-stubs/gravity-forms-stubs": "^v2.9.3"
+        "php-stubs/gravity-forms-stubs": "^v2.9.3",
+        "phpstan/phpstan": "^2.1",
+        "szepeviktor/phpstan-wordpress": "^v2.0.2"
     }
 }
