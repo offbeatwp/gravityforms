@@ -22,7 +22,7 @@ final class AcfFieldGravityForms extends acf_field
         // vars
         $this->name = 'gravityforms';
         $this->label = esc_html__('Gravity Forms');
-        $this->category = esc_html__('Relational', 'acf'); // Basic, Content, Choice, etc
+        $this->category = esc_html__('Relational', 'offbeatwp'); // Basic, Content, Choice, etc
         $this->defaults = ['multiple' => 0, 'allow_null' => 0];
         // do not delete!
         parent::__construct();
@@ -56,8 +56,8 @@ final class AcfFieldGravityForms extends acf_field
             'type' => 'radio',
             'name' => 'allow_null',
             'choices' => [
-                1 => __('Yes', 'acf'),
-                0 => __('No', 'acf'),
+                1 => esc_html__('Yes', 'offbeatwp'),
+                0 => esc_html__('No', 'offbeatwp'),
             ],
             'layout' => 'horizontal',
         ]);
@@ -66,8 +66,8 @@ final class AcfFieldGravityForms extends acf_field
             'type' => 'radio',
             'name' => 'multiple',
             'choices' => [
-                1 => __('Yes', 'acf'),
-                0 => __('No', 'acf'),
+                1 => esc_html__('Yes', 'offbeatwp'),
+                0 => esc_html__('No', 'offbeatwp'),
             ],
             'layout' => 'horizontal',
         ]);
