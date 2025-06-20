@@ -2,6 +2,7 @@
 
 namespace OffbeatWP\GravityForms\Models;
 
+use GF_Field_Checkbox;
 use GFAPI;
 use WP_Error;
 
@@ -10,7 +11,7 @@ final class GfEntryModel
     /** @var mixed[] */
     private array $entry;
     public readonly GfFormModel $form;
-    /** @var array<string, string|null> */
+    /** @var array<string, string|array<int, string>|null> */
     private array $fieldsMapping = [];
 
     /** @param mixed[] $entry */
@@ -31,9 +32,30 @@ final class GfEntryModel
         return (int)$this->entry['id'];
     }
 
-    private function findValueByInputName(string $inputName): ?string
+    /**
+     * @param string $inputName
+     * @return string|array<int, string>|null
+     */
+    private function findValueByInputName(string $inputName): null|string|array
     {
         $fieldKey = $this->form->getFieldKeyByInputName($inputName);
+        $field = $this->form->getFieldByInputName($inputName);
+
+        if ($field instanceof GF_Field_Checkbox && !empty($field->inputs)) {
+            $values = [];
+            foreach ($field->choices as $i => $choice) {
+                $index = $i + 1;
+                $values[$index] = $this->entry[$fieldKey . '.' . $index];
+            }
+
+            if (count($values) === 0) {
+                return null;
+            } elseif (count($values) === 1) {
+                return $values[0];
+            } else {
+                return $values;
+            }
+        }
 
         if ($fieldKey) {
             foreach ($this->entry as $entryKey => $entryValue) {
