@@ -51,7 +51,7 @@ final class GfEntryModel
             if (count($values) === 0) {
                 return null;
             } elseif (count($values) === 1) {
-                return $values[0];
+                return reset($values);
             } else {
                 return $values;
             }
