@@ -1,0 +1,14 @@
+# phpstan.neon
+parameters:
+    level: 8
+    phpVersion: 80100
+    treatPhpDocTypesAsCertain: false
+    paths:
+        - src
+    scanFiles:
+        - vendor/php-stubs/acf-pro-stubs/acf-pro-stubs.php
+        - vendor/php-stubs/gravity-forms-stubs/gravity-forms-stubs.php
+    excludePaths:
+        - vendor/*
+includes:
+    - vendor/szepeviktor/phpstan-wordpress/extension.neon
