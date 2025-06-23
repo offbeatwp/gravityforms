@@ -1,4 +1,5 @@
 <?php
+
 namespace OffbeatWP\GravityForms\Components;
 
 use OffbeatWP\Components\AbstractComponent;
@@ -11,11 +12,11 @@ final class GravityForm extends AbstractComponent
     public static function settings(): array
     {
         return [
-            'name'      => esc_html__('Gravity Form', 'offbeatwp'),
-            'slug'      => 'gravityform',
-            'category'  => esc_html__('Basic Modules', 'offbeatwp'),
-            'supports'  => ['widget', 'pagebuilder'],
-            'form'      => self::form(),
+            'name' => esc_html__('Gravity Form', 'offbeatwp'),
+            'slug' => 'gravityform',
+            'category' => esc_html__('Basic Modules', 'offbeatwp'),
+            'supports' => ['widget', 'pagebuilder'],
+            'form' => self::form()
         ];
     }
 

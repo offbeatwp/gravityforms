@@ -9,11 +9,8 @@ use RGFormsModel;
 final class AcfFieldGravityForms extends acf_field
 {
     /**
-     *  __construct
+     * This function will setup the field type data
      *
-     *  This function will setup the field type data
-     *
-     * @type function
      * @date  5/03/2014
      * @since 5.0.0
      */
@@ -29,16 +26,12 @@ final class AcfFieldGravityForms extends acf_field
     }
 
     /**
-     *  render_field_settings()
+     * Create extra settings for your field. These are visible when editing a field
      *
-     *  Create extra settings for your field. These are visible when editing a field
-     *
-     * @type action
      * @param mixed[] $field the $field being edited
      * @return void
      * @since 3.6
      * @date  23/01/13
-     *
      */
     public function render_field_settings(array $field)
     {
@@ -74,13 +67,9 @@ final class AcfFieldGravityForms extends acf_field
     }
 
     /**
-     *  render_field()
-     *
-     *  Create the HTML interface for your field
+     * Create the HTML interface for your field
      *
      * @param mixed[] $field the $field being rendered
-     *
-     * @type action
      * @return void
      * @since 3.6
      * @date  23/01/13
@@ -99,15 +88,15 @@ final class AcfFieldGravityForms extends acf_field
         if (class_exists('\RGFormsModel')) {
             $forms = RGFormsModel::get_forms(true);
         } else {
+            $forms = [];
             echo "<font style='color:red;font-weight:bold;'>Warning: Gravity Forms is not installed or activated. This field does not function without Gravity Forms!</font>";
         }
 
         //Prevent undefined variable notice
-        if (isset($forms)) {
-            foreach ($forms as $form) {
-                $choices[(int)$form->id] = ucfirst($form->title);
-            }
+        foreach ($forms as $form) {
+            $choices[(int)$form->id] = ucfirst($form->title);
         }
+
         // override field settings and render
         $field['choices'] = $choices;
         $field['type'] = 'checkbox';
@@ -153,11 +142,8 @@ final class AcfFieldGravityForms extends acf_field
     }
 
     /**
-     *  format_value()
+     * This filter is applied to the $value after it is loaded from the db and before it is returned to the template
      *
-     *  This filter is applied to the $value after it is loaded from the db and before it is returned to the template
-     *
-     * @type filter
      * @param mixed $value the value which was loaded from the database
      * @param mixed $post_id the $post_id from which the value was loaded
      * @param mixed[] $field the field array holding all the field options
@@ -165,7 +151,6 @@ final class AcfFieldGravityForms extends acf_field
      * @return mixed The modified value
      * @since 3.6
      * @date  23/01/13
-     *
      */
     public function format_value($value, $post_id, array $field)
     {
